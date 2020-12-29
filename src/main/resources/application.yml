@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    password: postgres
+    username: postgres
+    url: jdbc:postgresql://localhost:5432/db_loja
+  jmx:
+    enabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          time_zone: America/Recife
+        temp:
+          use_jdbc_metadata_defaults: false
+    show-sql: true
