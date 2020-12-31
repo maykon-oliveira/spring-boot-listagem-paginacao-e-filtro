@@ -23,6 +23,26 @@ class LivroService(private val livroRepository: LivroRepository) {
             specification = specification.and(LivroCriteria.isbn(criteria.isbn!!))
         }
 
+        if (Objects.nonNull(criteria.minDataLancamento)) {
+            specification = specification.and(LivroCriteria.minDataLancamento(criteria.minDataLancamento!!))
+        }
+
+        if (Objects.nonNull(criteria.maxDataLancamento)) {
+            specification = specification.and(LivroCriteria.maxDataLancamento(criteria.maxDataLancamento!!))
+        }
+
+        if (Objects.nonNull(criteria.minPreco)) {
+            specification = specification.and(LivroCriteria.minPreco(criteria.minPreco!!))
+        }
+
+        if (Objects.nonNull(criteria.maxPreco)) {
+            specification = specification.and(LivroCriteria.maxPreco(criteria.maxPreco!!))
+        }
+
+        if (Objects.nonNull(criteria.genero)) {
+            specification = specification.and(LivroCriteria.genero(criteria.genero!!))
+        }
+
         if (Objects.nonNull(criteria.autores)) {
             specification = specification.and(LivroCriteria.autores(criteria.autores!!))
         }
