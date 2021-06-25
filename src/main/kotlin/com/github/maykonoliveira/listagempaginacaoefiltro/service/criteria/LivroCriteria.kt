@@ -8,21 +8,24 @@ import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.format.annotation.DateTimeFormat.ISO
 import java.math.BigDecimal
 import java.time.LocalDate
+import java.util.*
 import javax.persistence.criteria.JoinType
 
 class LivroCriteria(
-    val isbn: String?,
+    private val isbn: String?,
     @DateTimeFormat(iso = ISO.DATE)
-    val minDataLancamento: LocalDate?,
-    val maxDataLancamento: LocalDate?,
-    val minPreco: BigDecimal?,
-    val maxPreco: BigDecimal?,
-    val genero: Genero?,
-    val autores: List<Long>?
-) {
-    companion object {
-        fun isbn(isbn: String): Specification<Livro> {
-            return Specification<Livro> { root, _, criteriaBuilder ->
+    private val minDataLancamento: LocalDate?,
+    private val maxDataLancamento: LocalDate?,
+    private val minPreco: BigDecimal?,
+    private val maxPreco: BigDecimal?,
+    private val genero: Genero?,
+    private val autores: List<Long>?
+) : CriteriaSpecification<Livro> {
+    override fun toSpecification(): Specification<Livro> {
+        var specification = Specification.where<Livro>(null)
+
+        if (Objects.nonNull(isbn)) {
+            specification = specification.and { root, _, criteriaBuilder ->
                 criteriaBuilder.equal(
                     root.get<Any>("isbn"),
                     isbn
@@ -30,32 +33,32 @@ class LivroCriteria(
             }
         }
 
-        fun minDataLancamento(minDataLancamento: LocalDate): Specification<Livro> {
-            return Specification<Livro> { root, _, criteriaBuilder ->
+        if (Objects.nonNull(minDataLancamento)) {
+            specification = specification.and { root, _, criteriaBuilder ->
                 criteriaBuilder.greaterThanOrEqualTo(root.get("dataLancamento"), minDataLancamento)
             }
         }
 
-        fun maxDataLancamento(maxDataLancamento: LocalDate): Specification<Livro> {
-            return Specification<Livro> { root, _, criteriaBuilder ->
+        if (Objects.nonNull(maxDataLancamento)) {
+            specification = specification.and { root, _, criteriaBuilder ->
                 criteriaBuilder.lessThanOrEqualTo(root.get("dataLancamento"), maxDataLancamento)
             }
         }
 
-        fun minPreco(minPreco: BigDecimal): Specification<Livro> {
-            return Specification<Livro> { root, _, criteriaBuilder ->
+        if (Objects.nonNull(minPreco)) {
+            specification = specification.and { root, _, criteriaBuilder ->
                 criteriaBuilder.greaterThanOrEqualTo(root.get("preco"), minPreco)
             }
         }
 
-        fun maxPreco(maxPreco: BigDecimal): Specification<Livro> {
-            return Specification<Livro> { root, _, criteriaBuilder ->
+        if (Objects.nonNull(maxPreco)) {
+            specification = specification.and { root, _, criteriaBuilder ->
                 criteriaBuilder.lessThanOrEqualTo(root.get("preco"), maxPreco)
             }
         }
 
-        fun genero(genero: Genero): Specification<Livro> {
-            return Specification<Livro> { root, _, criteriaBuilder ->
+        if (Objects.nonNull(genero)) {
+            specification = specification.and { root, _, criteriaBuilder ->
                 criteriaBuilder.equal(
                     root.get<Any>("genero"),
                     genero
@@ -63,11 +66,13 @@ class LivroCriteria(
             }
         }
 
-        fun autores(autores: List<Long>): Specification<Livro> {
-            return Specification<Livro> { root, _, criteriaBuilder ->
+        if (Objects.nonNull(autores)) {
+            specification = specification.and { root, _, criteriaBuilder ->
                 val join = root.join<Livro, Autor>("autores", JoinType.INNER)
                 criteriaBuilder.isTrue(join.get<Any>("id").`in`(autores))
             }
         }
+
+        return specification
     }
 }
